@@ -1,0 +1,22 @@
+<%= form_tag(sudoku_submit_path) do %>
+  <% @board.each_with_index do |row, i| %>
+    <% row.each_with_index do |col, j| %>
+      <%= label_tag("array[#{i}][#{j}]", "#{col}") %>
+      <%= text_field_tag("array[#{i}][#{j}]", col) %>
+    <% end %>
+    <br>
+  <% end %>
+  <%= submit_tag("Submit") %>
+<% end %>
+
+
+<%= form_tag(sudoku_auto_path) do %>
+  <% @auto_board.each_with_index do |row, i| %>
+    <% row.each_with_index do |col, j| %>
+      <%= label_tag("array_auto[#{i}][#{j}]", "#{col}") %>
+      <%= text_field_tag("array_auto[#{i}][#{j}]", col) %>
+    <% end %>
+    <br>
+  <% end %>
+  <%= submit_tag("Auto") %>
+<% end %>
