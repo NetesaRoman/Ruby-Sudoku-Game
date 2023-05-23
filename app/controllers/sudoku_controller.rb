@@ -38,22 +38,74 @@ class SudokuController < ApplicationController
       end
     end
 
+    solve_sudoku
 
-    @auto_board = @auto_board.transpose
-    @auto_board.each do |column|
-      available_numbers = (1..9).to_a
-      column.map! do
-        number = available_numbers.sample
-        available_numbers.delete(number)
-        number
-      end
-    end
-    @auto_board = @auto_board.transpose
     end
 
 
 
 private
+
+  def solve_sudoku
+    find_empty_cell = find_empty
+    return true unless find_empty_cell
+
+    row, col = find_empty_cell
+
+    (1..9).each do |num|
+      if valid_move?(row, col, num)
+        @auto_board[row][col] = num
+
+        if solve_sudoku
+          return true
+        else
+          @auto_board[row][col] = 0
+        end
+      end
+    end
+
+    false
+  end
+
+  def valid_move?(row, col, num)
+    !row_contains_num?(row, num) &&
+      !col_contains_num?(col, num) &&
+      !box_contains_num?(row - (row % 3), col - (col % 3), num)
+  end
+
+  def row_contains_num?(row, num)
+    @auto_board[row].include?(num)
+  end
+
+  def col_contains_num?(col, num)
+    @auto_board.any? { |row| row[col] == num }
+  end
+
+  def box_contains_num?(start_row, start_col, num)
+    (0..2).each do |row|
+      (0..2).each do |col|
+        if @auto_board[row + start_row][col + start_col] == num
+          return true
+        end
+      end
+    end
+
+    false
+  end
+
+  def find_empty
+    (0..8).each do |row|
+      (0..8).each do |col|
+        return [row, col] if @auto_board[row][col] == 0
+      end
+    end
+
+    nil
+  end
+
+
+end
+
 
 def valid_sudoku?(board)
   # Check rows
@@ -82,5 +134,5 @@ def valid_sudoku?(board)
 
   true
 end
-  end
+
 
